@@ -1,0 +1,60 @@
+---
+title: "StatInf_Assignment2_ToothGrowth"
+author: "Willianto Asalim"
+date: "17/05/2020"
+output: html_document
+---
+
+The platform specification used:
+
+Spec    | Description
+------- | -----------------------
+OS      | Windows 10 Pro - 64 bit
+CPU     | AMD Ryzen 5 - 3400G
+RAM     | 16GB DDR4 3000MHz
+Storage | 500GB SSD - M.2 NVMe (PCIe) 
+Tool    | RStudio
+
+***
+
+
+
+##  Statistical Inference Proj 2: Basic Inferential Data Analysis
+
+<br />
+
+
+### The Effect Of Vitamin C On Tooth Growth In Guinea Pigs
+
+<br />
+
+
+### Sypnosis
+
+The response is the length of odontoblasts (cells responsible for tooth growth) in 60 guinea pigs. Each animal received one of three dose levels of vitamin C (0.5, 1, and 2 mg/day) by one of two delivery methods, orange juice or ascorbic acid (a form of vitamin C and coded as VC).
+
+Info on ToothGrowth dataset can be found at the following link: [rdocumentation website](https://www.rdocumentation.org/packages/datasets/versions/3.6.2/topics/ToothGrowth)
+
+
+***
+
+```{r setoptions, echo=FALSE}
+## Setting Global Option where echo = true so that someone will be able to read the code and results.
+knitr::opts_chunk$set(echo = TRUE, results = "asis", tidy = FALSE)
+```
+
+1. Load the ToothGrowth data and perform some basic exploratory data analyses
+```{r LoadToothGrowth_EDA}
+library(datasets) 
+data("ToothGrowth")
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
