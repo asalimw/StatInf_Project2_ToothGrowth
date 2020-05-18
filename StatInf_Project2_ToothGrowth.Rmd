@@ -46,8 +46,26 @@ knitr::opts_chunk$set(echo = TRUE, results = "asis", tidy = FALSE)
 1. Load the ToothGrowth data and perform some basic exploratory data analyses
 
 ```{r LoadToothGrowth_EDA}
-library(datasets) 
-data("ToothGrowth")
+library(datasets) ##Load R Builtin Data sets
+data("ToothGrowth") ##Load ToothGrowth Datasets
 ```
 
+```{r CheckToothGrowthData}
+dim(ToothGrowth) ##No. observations and variables
+names(ToothGrowth) ##variables names
+str(ToothGrowth)
+
+```
+
+#### The ToothGrowth Dataset containts `r nrow(ToothGrowth)` observations and `r length(ToothGrowth)` variables: `r names(ToothGrowth)`.
+```{r, ToothGrowthScatterPlot}
+library(ggplot2) ##Load ggplot2 library
+
+edaPlot <- ggplot(ToothGrowth, aes(dose, len, color = supp))  
+
+edaPlot + geom_point(size = 2) + theme_bw() + labs(x = "Dose", y = "Length", color = "Supplement") +
+        scale_color_brewer(palette = "Dark2")
+
+
+```
 
