@@ -43,7 +43,7 @@ Info on ToothGrowth dataset can be found at the following link: [rdocumentation 
 knitr::opts_chunk$set(echo = TRUE, results = "asis", tidy = FALSE)
 ```
 
-1. Load the ToothGrowth data and perform some basic exploratory data analyses
+#### 1. Load the ToothGrowth data and perform some basic exploratory data analyses
 
 ```{r LoadToothGrowth_EDA}
 library(datasets) ##Load R Builtin Data sets
@@ -57,15 +57,44 @@ str(ToothGrowth)
 
 ```
 
-#### The ToothGrowth Dataset containts `r nrow(ToothGrowth)` observations and `r length(ToothGrowth)` variables: `r names(ToothGrowth)`.
+<br />
+
+##### The ToothGrowth Dataset contains `r nrow(ToothGrowth)` observations and `r length(ToothGrowth)` variables: `r names(ToothGrowth)`.
+
+<br />
+
+Below is the Exploratory Data Analysis perform for the dataset using Geom Point and Boxplot.
 ```{r, ToothGrowthScatterPlot}
 library(ggplot2) ##Load ggplot2 library
 
-edaPlot <- ggplot(ToothGrowth, aes(dose, len, color = supp))  
-
+edaPlot <- ggplot(ToothGrowth, aes(factor(dose), len, color = supp))  ##ggplot basic info
 edaPlot + geom_point(size = 2) + theme_bw() + labs(x = "Dose", y = "Length", color = "Supplement") +
         scale_color_brewer(palette = "Dark2")
 
 
 ```
+
+***
+
+#### 2. Provide a basic summary of the data.
+
+```{r ToothGrowthSummary}
+summary(ToothGrowth)
+
+```
+
+```{r BoxPlot}
+edaPlot + geom_boxplot() +
+      # facet_grid(.~supp)+
+      facet_grid(.~supp, labeller = as_labeller(
+            c("OJ" = "Orange juice", 
+              "VC" = "Vitamin C"))) +
+      labs(title = "Tooth growth of 60 guinea pigs by supplement type based on dosage",
+           x = "Dose in milligrams/day", 
+           y = "Tooth Lengh") +
+      scale_fill_discrete(name = "Dosage of\nvitamin C\nin mg/day")
+
+
+```
+
 
