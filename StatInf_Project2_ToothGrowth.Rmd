@@ -63,7 +63,7 @@ str(ToothGrowth)
 
 <br />
 
-Below is the Exploratory Data Analysis perform for the dataset using Geom Point and Boxplot.
+Below is the Exploratory Data Analysis perform for the dataset using Geom Point.
 ```{r, ToothGrowthScatterPlot}
 library(ggplot2) ##Load ggplot2 library
 
@@ -94,7 +94,51 @@ edaPlot + geom_boxplot() +
            y = "Tooth Lengh") +
       scale_fill_discrete(name = "Dosage of\nvitamin C\nin mg/day")
 
+ggplot(ToothGrowth, aes(supp, len, fill=supp)) +
+    geom_boxplot() + theme_bw() + 
+    labs(title = "Tooth rowth of 60 guinea pigs based on supplement type only",
+          x = "Supplement", 
+          y = "Length", 
+          color = "Supplement") + 
+    scale_fill_brewer(palette = "Dark2")
 
 ```
 
+***
 
+#### 3. Use confidence intervals and/or hypothesis tests to compare tooth growth by supp and dose. 
+
+The hypothesis tests will be performed using th P value approach, if there is a significance difference with different dosage and supplement type. We want a 95% chance the data is significant and we set the critical value to be 5% (p = 0.05). If the P value is smaller than 0.05) then it is unlikely and if the P value is larger than 0.05) then it is likely that the different supplement and dose has impact on the tooth growth of the guinea pigs. 
+
+Based on the explotary data analysis and the summary of the ToothGrowth data performed above we know that there are a total of 60 guinea pigs: 30 are fed with OJ with different dosage and another 30 are fed with VC with different dosage.
+
+
+Test 1: T Test based on supplement type
+
+```{r TestSupplement}
+test1 <- t.test(len~supp, data = ToothGrowth, paired = FALSE, var.equal = TRUE)
+test1
+```
+
+
+```{r oj_vcData}
+## Dataset based on OJ Supplement
+ojData <- subset(ToothGrowth, supp %in% c("OJ"))
+ojData
+
+## Dataset based on VC Supplement
+vcData <- subset(ToothGrowth, supp %in% c("VC"))
+vcData
+```
+
+```{r TestDose}
+##Comparing tooth growth base on dose 0.5 vs 1
+ojTest2 <- t.test(len~dose, data = subset(ojData, dose %in% c(.5, 1)), paired = TRUE, var.equal = TRUE)
+ojTest2
+
+vcTest2 <- t.test(len~dose, data = subset(vcData, dose %in% c(.5, 1)), paired = TRUE, var.equal = TRUE)
+vcTest2
+ojTest2$p.value
+ojTest2$conf.int
+
+```
