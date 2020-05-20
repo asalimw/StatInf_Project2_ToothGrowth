@@ -3,22 +3,9 @@ title: "StatInf_Assignment2_ToothGrowth"
 author: "Willianto Asalim"
 date: "17/05/2020"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
-
-The platform specification used:
-
-Spec    | Description
-------- | -----------------------
-OS      | Windows 10 Pro - 64 bit
-CPU     | AMD Ryzen 5 - 3400G
-RAM     | 16GB DDR4 3000MHz
-Storage | 500GB SSD - M.2 NVMe (PCIe) 
-Tool    | RStudio
-
-***
-
 
 
 ##  Statistical Inference Proj 2: Basic Inferential Data Analysis
@@ -26,7 +13,8 @@ Tool    | RStudio
 <br />
 
 
-### The Effect Of Vitamin C On Tooth Growth In Guinea Pigs
+#### The Effect Of Vitamin C On Tooth Growth In Guinea Pigs
+***
 
 <br />
 
@@ -35,22 +23,24 @@ Tool    | RStudio
 
 The response is the length of odontoblasts (cells responsible for tooth growth) in 60 guinea pigs. Each animal received one of three dose levels of vitamin C (0.5, 1, and 2 mg/day) by one of two delivery methods, orange juice or ascorbic acid (a form of vitamin C and coded as VC).
 
-Info on ToothGrowth dataset can be found at the following link: [rdocumentation website](https://www.rdocumentation.org/packages/datasets/versions/3.6.2/topics/ToothGrowth)
+Info on ToothGrowth dataset can be found at the following link: [rdocumentation website](https://www.rdocumentation.org/packages/datasets/versions/3.6.2/topics/ToothGrowth) <- click here
 
 
-***
-
-
-
-```{r setoptions, echo=FALSE}
-## Setting Global Option where echo = true so that someone will be able to read the code and results.
+```{r LoadPackages, echo=FALSE}
 library(knitr) ##Load Knitr package
 library(ggplot2) ##Plotting and data
 library(pander) ##Load package for tidy T test result
-knitr::opts_chunk$set(echo = TRUE, results = "asis", tidy = FALSE)
 ```
 
-#### 1. Load the ToothGrowth data and perform some basic exploratory data analyses
+```{r setoptions, echo=FALSE}
+## Setting Global Option where echo = true so that someone will be able to read the code and results.
+knitr::opts_chunk$set(echo = TRUE, results = "hold", tidy = TRUE)
+```
+
+<br />
+
+### 1. Load the ToothGrowth data and perform some basic exploratory data analyses
+***
 
 ```{r LoadToothGrowth_EDA}
 library(datasets) ##Load R Builtin Data sets
@@ -61,7 +51,6 @@ data("ToothGrowth") ##Load ToothGrowth Datasets
 dim(ToothGrowth) ##No. observations and variables
 names(ToothGrowth) ##Variables names
 kable(head(ToothGrowth))
-
 ```
 
 <br />
@@ -72,27 +61,22 @@ kable(head(ToothGrowth))
 
 Below is the Exploratory Data Analysis perform for the dataset using Geom Point.
 ```{r, ToothGrowthScatterPlot}
-library(ggplot2) ##Plotting and data
-
 edaPlot <- ggplot(ToothGrowth, aes(factor(dose), len, color = supp))  ##ggplot basic info
 edaPlot + geom_point(size = 2) + theme_bw() + labs(x = "Dose", y = "Length", color = "Supplement") +
         scale_color_brewer(palette = "Dark2")
-
-
 ```
 
+<br>
+
+### 2. Provide a basic summary of the data.
 ***
-
-#### 2. Provide a basic summary of the data.
-
 ```{r ToothGrowthSummary}
-summary(ToothGrowth)
+kable(summary(ToothGrowth))
 
 ```
 
 ```{r BoxPlot}
 library(gridExtra) ##Provide side by side plotting
-
 ##Side by side boxplot on Orange Juice vs Vit C dosage
 ## edaplot is from the part 1 above.
 p1 <- edaPlot + geom_boxplot() +
@@ -118,105 +102,96 @@ p2 <- ggplot(ToothGrowth, aes(supp, len, fill=supp)) +
 grid.arrange(p2, p1, ncol=2)
 ```
 
+<br />
+
+### 3. Use conf. intervals or hypothesis tests to compare tooth growth by supp & dose
 ***
+Based on the exploratory data analysis and the summary of the ToothGrowth data performed above we know that there are a total of 60 guinea pigs: 30 are fed with OJ with different dosages and another 30 are fed with VC with different dosages.
 
-#### 3. Use confidence intervals and/or hypothesis tests to compare tooth growth by supp and dose. 
+The hypothesis tests will be performed using th P value approach, if there is a significance difference with different dosage and supplement type. There are different tests we can carry out in the ToothGrowth dataset and in this instance we will be conducting 4 tests.
+- Test based on 2 different supplements ie OJ vs VC  
+- Test based on 3 different dosages in the same supplement. ie half dose vs one dose vs two dose in OJ supplement vice versa.
 
-Based on the explotary data analysis and the summary of the ToothGrowth data performed above we know that there are a total of 60 guinea pigs: 30 are fed with OJ with different dosages and another 30 are fed with VC with different dosages.
+<br />
 
-The hypothesis tests will be performed using th P value approach, if there is a significance difference with different dosage and supplement type. 95% confidence interval the data is significant difference If the P value is smaller than 0.05 then it is unlikely and if the P value is larger than 0.05 then it is likely that the different supplement and dose has impact on the tooth growth of the guinea pigs. 
+3 different dosages data created (please refer to the appendix)
+```{r DoseData}
+## Dataset based on 0.5 dose
+lowDose <- subset(ToothGrowth, dose %in% c("0.5"))
 
-There are different tests we can carry out in the ToothGrowth dataset and in this instance we will be conducting 7 tests.
-- Test based on different supplements ie OJ vs VC  
-- Test based on different dosages in the same supplement. ie half dose vs one dose vs two dose in OJ supplement vice versa.
+## Dataset based on 1.0 dose
+midDose <- subset(ToothGrowth, dose %in% c("1"))
 
-Create two seperate datas based on two different supplements OJ & VC
-```{r oj_vcData}
-## Dataset based on OJ Supplement
-ojData <- subset(ToothGrowth, supp %in% c("OJ"))
-kable(ojData)
-
-## Dataset based on VC Supplement
-vcData <- subset(ToothGrowth, supp %in% c("VC"))
-kable(vcData)
-
+## Dataset based on 2.0 dose
+highDose <- subset(ToothGrowth, dose %in% c("2"))
 ```
 
 <br />
 
 T Test based on supplement type
-
 ```{r TestSupplement}
 ## T Test on different supplements OJ vs VC
 test1 <- t.test(len~supp, data = ToothGrowth, paired = FALSE, var.equal = TRUE)
 pander(test1)
 ```
 
-<br />
 
-T Test based on OJ data dose
-
-```{r OJTestDose}
-##Comparing tooth growth base on dose 0.5 vs 1
-ojTest0.5_1 <- t.test(len~dose, data = subset(ojData, dose %in% c(.5, 1)), paired = TRUE, var.equal = TRUE)
-pander(ojTest0.5_1)
-
-
-##Comparing tooth growth base on dose 0.5 vs 2
-ojTest0.5_2 <- t.test(len~dose, data = subset(ojData, dose %in% c(.5, 2)), paired = TRUE, var.equal = TRUE)
-pander(ojTest0.5_2)
-
-
-##Comparing tooth growth base on dose 1 vs 2
-ojTest1_2 <- t.test(len~dose, data = subset(ojData, dose %in% c(.5, 2)), paired = TRUE, var.equal = TRUE)
-pander(ojTest1_2)
-```
 
 <br />
 
-T Test based on OJ data dose  
-```{r VCTestDoseHalfVsOne}
-##Comparing tooth growth base on dose 0.5 vs 1
-vcTest0.5_1 <- t.test(len~dose, data = subset(vcData, dose %in% c(.5, 1)), paired = TRUE, var.equal = TRUE)
-pander(vcTest0.5_1)
-
-```
-
-```{r DoseData}
-## Dataset based on 0.5 dose
-lowDose <- subset(ToothGrowth, dose %in% c("0.5"))
-kable(lowDose)
-
-## Dataset based on 1.0 dose
-midDose <- subset(ToothGrowth, dose %in% c("1"))
-kable(midDose)
-
-## Dataset based on 2.0 dose
-highDose <- subset(ToothGrowth, dose %in% c("2"))
-kable(highDose)
-```
-T Test based on dose
-
-```{r TestDose}
+T Test based on dose of OJ VS VC
+```{r TestDose, fig.height= 3, fig.width=3}
 ##Comparing 0.5 dose tooth growth based supplements 
-lowDoseTest <- t.test(len~supp, data = subset(lowDose, supp %in% c("OJ", "VC")), paired = FALSE, var.equal = TRUE)
+lowDoseTest <- t.test(len~supp, data = subset(lowDose, supp %in% c("OJ", "VC")), paired = FALSE, var.equal = TRUE) 
 pander(lowDoseTest)
-
 
 ##Comparing 1.0 dose tooth growth based supplements
 midDoseTest <- t.test(len~supp, data = subset(midDose, supp %in% c("OJ", "VC")), paired = FALSE, var.equal = TRUE)
 pander(midDoseTest)
 
-
 ##Comparing 2.0 dose tooth growth based supplements
 highDoseTest <- t.test(len~supp, data = subset(highDose, supp %in% c("OJ", "VC")), paired = FALSE, var.equal = TRUE)
 pander(highDoseTest)
+
 ```
+
+<br />
+
+### 4. State your conclusions and the assumptions needed for your conclusions.
+***
+We would like more than 95% confidence interval because anything less than that is not significance difference for scientific studies and therefore the P value must be less than 0.05 or 5%. If the P value is smaller than 0.05 this means that it is likely that the supplement or dose has impact on the tooth growth of the guinea pigs. If the P value is larger than 0.05 then it is unlikely that the supplement or dose has impact on the tooth growth of the guinea pigs. 
+
+Based on the T test conducted above, the P value of guinea pigs consuming OJ or VC is `r test1$p.value`. The P value is more than 0.05 which means there is no significance difference whether the guinea pigs consume OJ or VC to enhance the tooth growth. 
+
+But for scientific reasearch purpose we would like to see whether the different dosage of OJ or VC intake has any impact on the tooth growth of the guinea pigs. Observing the T tests conducted above, when the dose are 0.5 and 1.0 the P Values are `r lowDoseTest$p.value` and `r midDoseTest$p.value` respectively. The P values are less than 0.05 which means that there is a significance difference. Guinea pigs that consumed 0.5 and 1.0 dose of OJ will have higher tooth growth compared to the guinea pigs that consumed 0.5 and 1.0 dose of VC.
+
+Whereas the dose of 2.0, the P value is `r highDoseTest$p.value`. The P value is more than 0.05 which means there is no significance difference in tooth growth whether the guinea pigs consumed 2.0 dose of OJ or VC.
+
+
+<br />
+
+### 5. Appendix
+***
+##### 3 different dosages data of both OJ and VC
+
+###### 0.5 Dose Data
+`r kable(lowDose)`
+
+###### 1.0 Dose Data
+`r kable(midDose)`
+
+###### 2.0 Dose Data
+`r kable(highDose)`
 
 ***
 
-
-
-#### 4. State your conclusions and the assumptions needed for your conclusions.
+##### The platform specification used:
+Spec    | Description
+------- | -----------------------
+OS      | Windows 10 Pro - 64 bit
+CPU     | AMD Ryzen 5 - 3400G
+RAM     | 16GB DDR4 3000MHz
+Storage | 500GB SSD - M.2 NVMe (PCIe) 
+Tool    | RStudio
 
 
