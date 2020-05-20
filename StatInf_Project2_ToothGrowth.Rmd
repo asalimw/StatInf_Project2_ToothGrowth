@@ -3,8 +3,8 @@ title: "StatInf_Assignment2_ToothGrowth"
 author: "Willianto Asalim"
 date: "17/05/2020"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 
 ##  Statistical Inference Proj 2: Basic Inferential Data Analysis
@@ -115,15 +115,17 @@ To measure the tooth growth impact of the guinea pigs due to the different dose 
 
 Based on the first T test conducted, the P value of guinea pigs consuming OJ or VC is `r test1$p.value`. The P value is more than 0.05 which means there is no significance difference whether the guinea pigs consume OJ or VC to enhance the tooth growth. 
 However for scientific research purpose we would like to check whether the different dose level of OJ or VC intake has any impact on the tooth growth of the guinea pigs. Observing the T tests conducted on different dose level 0.5 and 1.0, the P Values are `r lowDoseTest$p.value` and `r format(midDoseTest$p.value, scientific=F)` respectively. These P values are less than 0.05 for both dose levels of supplements which means there is a significance difference. Guinea pigs that consumed 0.5 and 1.0 dose level of OJ will have higher tooth growth than the guinea pigs that consumed 0.5 and 1.0 dose level of VC.
-Whereas the dose level of 2.0, the P value is `r highDoseTest$p.value`. The P value is more than 0.05 which means there is no significance difference in tooth growth whether the guinea pigs consumed 2.0 dose level of OJ or VC.
+Whereas the dose level of 2.0, the P value is `r highDoseTest$p.value`. The P value is more than 0.05 which means there is no significance difference in tooth growth whether the guinea pigs consumed 2.0 dose level of OJ or VC. T Test results in appendix below.
 
 <br />
 
 ### 5. Appendix
-***
 
+***
 ##### T Test Results:
+
 <br />
+
 
 T Test based on supplements - OJ vs VC
 `r pander(test1)`
