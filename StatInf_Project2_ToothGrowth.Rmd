@@ -139,6 +139,7 @@ kable(vcData)
 
 ```
 
+<br />
 
 T Test based on supplement type
 
@@ -148,12 +149,15 @@ test1 <- t.test(len~supp, data = ToothGrowth, paired = FALSE, var.equal = TRUE)
 pander(test1)
 ```
 
+<br />
+
 T Test based on OJ data dose
 
 ```{r OJTestDose}
 ##Comparing tooth growth base on dose 0.5 vs 1
 ojTest0.5_1 <- t.test(len~dose, data = subset(ojData, dose %in% c(.5, 1)), paired = TRUE, var.equal = TRUE)
 pander(ojTest0.5_1)
+
 
 ##Comparing tooth growth base on dose 0.5 vs 2
 ojTest0.5_2 <- t.test(len~dose, data = subset(ojData, dose %in% c(.5, 2)), paired = TRUE, var.equal = TRUE)
@@ -165,6 +169,8 @@ ojTest1_2 <- t.test(len~dose, data = subset(ojData, dose %in% c(.5, 2)), paired 
 pander(ojTest1_2)
 ```
 
+<br />
+
 T Test based on OJ data dose  
 ```{r VCTestDoseHalfVsOne}
 ##Comparing tooth growth base on dose 0.5 vs 1
@@ -172,7 +178,41 @@ vcTest0.5_1 <- t.test(len~dose, data = subset(vcData, dose %in% c(.5, 1)), paire
 pander(vcTest0.5_1)
 
 ```
+
+```{r DoseData}
+## Dataset based on 0.5 dose
+lowDose <- subset(ToothGrowth, dose %in% c("0.5"))
+kable(lowDose)
+
+## Dataset based on 1.0 dose
+midDose <- subset(ToothGrowth, dose %in% c("1"))
+kable(midDose)
+
+## Dataset based on 2.0 dose
+highDose <- subset(ToothGrowth, dose %in% c("2"))
+kable(highDose)
+```
+T Test based on dose
+
+```{r OJTestDose}
+##Comparing 0.5 dose tooth growth based supplements 
+lowDoseTest <- t.test(len~supp, data = subset(lowDose, supp %in% c("OJ", "VC")), paired = FALSE, var.equal = TRUE)
+pander(lowDoseTest)
+
+
+##Comparing 1.0 dose tooth growth based supplements
+midDoseTest <- t.test(len~supp, data = subset(midDose, supp %in% c("OJ", "VC")), paired = FALSE, var.equal = TRUE)
+pander(midDoseTest)
+
+
+##Comparing 2.0 dose tooth growth based supplements
+highDoseTest <- t.test(len~supp, data = subset(highDose, supp %in% c("OJ", "VC")), paired = FALSE, var.equal = TRUE)
+pander(highDoseTest)
+```
+
 ***
+
+
 
 #### 4. State your conclusions and the assumptions needed for your conclusions.
 
