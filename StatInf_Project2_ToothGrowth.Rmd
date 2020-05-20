@@ -88,18 +88,18 @@ kable(summary(ToothGrowth))
 
 ### 3. Use conf. intervals or hypothesis tests to compare tooth growth by supp & dose
 ***
-Based on the exploratory data analysis and the summary of the ToothGrowth data performed above we know that there are a total of 60 guinea pigs: 30 are fed with OJ with 3 different dosages and another 30 are fed with VC with 3 different dosages.
+Based on the exploratory data analysis and the summary of the ToothGrowth data performed above we know that there are a total of 60 guinea pigs: 30 are fed with OJ with 3 different dosages and another 30 are fed with VC with 3 different dose levels.
 
 The hypothesis tests will be performed using th P value approach, if there is a significance difference with different dosage and supplement type. There are different tests we can carry out in the ToothGrowth dataset and in this instance we will be conducting 4 tests.
 
 <br />
 
 - Test based on 2 different supplements ie OJ vs VC  
-- Test based on 3 different dosages in the same supplement. ie half dose vs one dose vs two dose in OJ supplement vice versa.
+- Test based on 3 different dose levels in the same supplement. ie half dose vs one dose vs two dose in OJ supplement vice versa.
 
 <br />
 
-3 different dosages data created (Result refer to the appendix)
+3 different dose levels data created (Result refer to the appendix)
 ```{r DoseData}
 ## Dataset based on 0.5 dose
 lowDose <- subset(ToothGrowth, dose %in% c("0.5"))
@@ -125,16 +125,16 @@ test1 <- t.test(len~supp, data = ToothGrowth, paired = FALSE, var.equal = TRUE)
 
 T Test based on different dose of OJ vs VC (Result refer to Appendix)
 ```{r TestDose, fig.height= 3, fig.width=3}
-##Comparing 0.5 dose tooth growth based supplements 
+##Comparing 0.5 dose level tooth growth based supplements 
 lowDoseTest <- t.test(len~supp, data=subset(lowDose, supp%in%c("OJ", "VC")), 
                       paired=F, var.equal=T) 
 
 
-##Comparing 1.0 dose tooth growth based supplements
+##Comparing 1.0 dose level tooth growth based supplements
 midDoseTest <- t.test(len~supp, data=subset(midDose, supp%in%c("OJ", "VC")), 
                       paired=F, var.equal=T)
 
-##Comparing 2.0 dose tooth growth based supplements
+##Comparing 2.0 dose level tooth growth based supplements
 highDoseTest <- t.test(len~supp, data=subset(highDose, supp%in%c("OJ", "VC")), 
                        paired=F, var.equal=T)
 ```
@@ -143,13 +143,13 @@ highDoseTest <- t.test(len~supp, data=subset(highDose, supp%in%c("OJ", "VC")),
 
 ### 4. State your conclusions and the assumptions needed for your conclusions.
 ***
-We would like more than 95% confidence interval because anything less than that is not significance difference for scientific studies and therefore the P value must be less than 5% or < 0.05. If the P value is smaller than 0.05 this means that it is likely that the supplement or dose has impact on the tooth growth of the guinea pigs. If the P value is larger than 0.05 then it is unlikely that the supplement or dose has impact on the tooth growth of the guinea pigs. 
+We would like more than 95% confidence interval because anything less than that is not significance difference for scientific studies and therefore the P value must be less than 5% or < 0.05. If the P value is smaller than 0.05 this means that it is likely that the supplement or dose has impact on the tooth growth of the guinea pigs. If the P value is larger than 0.05 then it is unlikely that the supplement or dose has impact on the tooth growth of the guinea pigs. Please refer to the appendix for the all the T test results.
 
-Based on the T test conducted above, the P value of guinea pigs consuming OJ or VC is `r test1$p.value`. The P value is more than 0.05 which means there is no significance difference whether the guinea pigs consume OJ or VC to enhance the tooth growth. 
+Based on the first T test conducted above, the P value of guinea pigs consuming OJ or VC is `r test1$p.value`. The P value is more than 0.05 which means there is no significance difference whether the guinea pigs consume OJ or VC to enhance the tooth growth. 
 
-But for scientific research purpose we would like to see whether the different dosage of OJ or VC intake has any impact on the tooth growth of the guinea pigs. Observing the T tests conducted above, when the dose are 0.5 and 1.0 the P Values are `r lowDoseTest$p.value` and `r format(midDoseTest$p.value, scientific=F)` respectively. The P values are less than 0.05 which means that there is a significance difference. Guinea pigs that consumed 0.5 and 1.0 dose of OJ will have higher tooth growth compared to the guinea pigs that consumed 0.5 and 1.0 dose of VC.
+But for scientific research purpose we would like to see whether the different dose level of OJ or VC intake has any impact on the tooth growth of the guinea pigs. Observing the T tests conducted above, when the dose level are 0.5 and 1.0 the P Values are `r lowDoseTest$p.value` and `r format(midDoseTest$p.value, scientific=F)` respectively. The P values are less than 0.05 which means that there is a significance difference. Guinea pigs that consumed 0.5 and 1.0 dose level of OJ will have higher tooth growth compared to the guinea pigs that consumed 0.5 and 1.0 dose level of VC.
 
-Whereas the dose of 2.0, the P value is `r highDoseTest$p.value`. The P value is more than 0.05 which means there is no significance difference in tooth growth whether the guinea pigs consumed 2.0 dose of OJ or VC.
+Whereas the dose level of 2.0, the P value is `r highDoseTest$p.value`. The P value is more than 0.05 which means there is no significance difference in tooth growth whether the guinea pigs consumed 2.0 dose level of OJ or VC.
 
 
 <br />
@@ -161,13 +161,13 @@ Whereas the dose of 2.0, the P value is `r highDoseTest$p.value`. The P value is
 T Test based on supplements - OJ vs VC
 `r pander(test1)`
 
-T Test based on Dose 0.5 of OJ vs VC
+T Test based on 0.5 dose level of OJ vs VC
 `r pander(lowDoseTest)`
 
-T Test based on Dose 1.0 of OJ vs VC
+T Test based on 1.0 dose level of OJ vs VC
 `r pander(midDoseTest)`
 
-T Test based on Dose 2.0 of OJ vs VC
+T Test based on 2.0 dose level of OJ vs VC
 `r pander(highDoseTest)`
 
 ***
