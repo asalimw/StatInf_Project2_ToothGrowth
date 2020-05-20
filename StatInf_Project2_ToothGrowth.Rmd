@@ -38,8 +38,12 @@ Info on ToothGrowth dataset can be found at the following link: [rdocumentation 
 
 ***
 
+
+
 ```{r setoptions, echo=FALSE}
 ## Setting Global Option where echo = true so that someone will be able to read the code and results.
+library(knitr) ##Load Knitr package
+library(pander) ##Load package for tidy T test result
 knitr::opts_chunk$set(echo = TRUE, results = "asis", tidy = FALSE)
 ```
 
@@ -52,8 +56,8 @@ data("ToothGrowth") ##Load ToothGrowth Datasets
 
 ```{r CheckToothGrowthData}
 dim(ToothGrowth) ##No. observations and variables
-names(ToothGrowth) ##variables names
-str(ToothGrowth)
+names(ToothGrowth) ##Variables names
+kable(head(ToothGrowth))
 
 ```
 
@@ -65,7 +69,7 @@ str(ToothGrowth)
 
 Below is the Exploratory Data Analysis perform for the dataset using Geom Point.
 ```{r, ToothGrowthScatterPlot}
-library(ggplot2) ##Load ggplot2 library
+library(ggplot2) ##Plotting and data
 
 edaPlot <- ggplot(ToothGrowth, aes(factor(dose), len, color = supp))  ##ggplot basic info
 edaPlot + geom_point(size = 2) + theme_bw() + labs(x = "Dose", y = "Length", color = "Supplement") +
@@ -84,61 +88,92 @@ summary(ToothGrowth)
 ```
 
 ```{r BoxPlot}
-edaPlot + geom_boxplot() +
+library(gridExtra) ##Provide side by side plotting
+
+##Side by side boxplot on Orange Juice vs Vit C dosage
+## edaplot is from the part 1 above.
+p1 <- edaPlot + geom_boxplot() +
       # facet_grid(.~supp)+
       facet_grid(.~supp, labeller = as_labeller(
             c("OJ" = "Orange juice", 
               "VC" = "Vitamin C"))) +
-      labs(title = "Tooth growth of 60 guinea pigs by supplement type based on dosage",
+      labs(title = "Tooth growth - dosages~supplements",
            x = "Dose in milligrams/day", 
            y = "Tooth Lengh") +
       scale_fill_discrete(name = "Dosage of\nvitamin C\nin mg/day")
 
-ggplot(ToothGrowth, aes(supp, len, fill=supp)) +
+## Boxplot based on supplements
+p2 <- ggplot(ToothGrowth, aes(supp, len, fill=supp)) +
     geom_boxplot() + theme_bw() + 
-    labs(title = "Tooth rowth of 60 guinea pigs based on supplement type only",
+    labs( title = "Tooth growth - supplements",
           x = "Supplement", 
-          y = "Length", 
+          y = "Tooth Length", 
           color = "Supplement") + 
     scale_fill_brewer(palette = "Dark2")
 
+## Side by side plotting
+grid.arrange(p2, p1, ncol=2)
 ```
 
 ***
 
 #### 3. Use confidence intervals and/or hypothesis tests to compare tooth growth by supp and dose. 
 
-The hypothesis tests will be performed using th P value approach, if there is a significance difference with different dosage and supplement type. We want a 95% chance the data is significant and we set the critical value to be 5% (p = 0.05). If the P value is smaller than 0.05) then it is unlikely and if the P value is larger than 0.05) then it is likely that the different supplement and dose has impact on the tooth growth of the guinea pigs. 
+Based on the explotary data analysis and the summary of the ToothGrowth data performed above we know that there are a total of 60 guinea pigs: 30 are fed with OJ with different dosages and another 30 are fed with VC with different dosages.
 
-Based on the explotary data analysis and the summary of the ToothGrowth data performed above we know that there are a total of 60 guinea pigs: 30 are fed with OJ with different dosage and another 30 are fed with VC with different dosage.
+The hypothesis tests will be performed using th P value approach, if there is a significance difference with different dosage and supplement type. 95% confidence interval the data is significant difference If the P value is smaller than 0.05 then it is unlikely and if the P value is larger than 0.05 then it is likely that the different supplement and dose has impact on the tooth growth of the guinea pigs. 
 
+There are different tests we can carry out in the ToothGrowth dataset and in this instance we will be conducting 7 tests.
+- Test based on different supplements ie OJ vs VC  
+- Test based on different dosages in the same supplement. ie half dose vs one dose vs two dose in OJ supplement vice versa.
 
-Test 1: T Test based on supplement type
-
-```{r TestSupplement}
-test1 <- t.test(len~supp, data = ToothGrowth, paired = FALSE, var.equal = TRUE)
-test1
-```
-
-
+Create two seperate datas based on two different supplements OJ & VC
 ```{r oj_vcData}
 ## Dataset based on OJ Supplement
 ojData <- subset(ToothGrowth, supp %in% c("OJ"))
-ojData
+kable(ojData)
 
 ## Dataset based on VC Supplement
 vcData <- subset(ToothGrowth, supp %in% c("VC"))
-vcData
+kable(vcData)
+
 ```
 
-```{r TestDose}
+
+T Test based on supplement type
+
+```{r TestSupplement}
+## T Test on different supplements OJ vs VC
+test1 <- t.test(len~supp, data = ToothGrowth, paired = FALSE, var.equal = TRUE)
+pander(test1)
+```
+
+T Test based on OJ data dose
+
+```{r OJTestDose}
 ##Comparing tooth growth base on dose 0.5 vs 1
-ojTest2 <- t.test(len~dose, data = subset(ojData, dose %in% c(.5, 1)), paired = TRUE, var.equal = TRUE)
-ojTest2
+ojTest0.5_1 <- t.test(len~dose, data = subset(ojData, dose %in% c(.5, 1)), paired = TRUE, var.equal = TRUE)
+pander(ojTest0.5_1)
 
-vcTest2 <- t.test(len~dose, data = subset(vcData, dose %in% c(.5, 1)), paired = TRUE, var.equal = TRUE)
-vcTest2
-ojTest2$p.value
-ojTest2$conf.int
+##Comparing tooth growth base on dose 0.5 vs 2
+ojTest0.5_2 <- t.test(len~dose, data = subset(ojData, dose %in% c(.5, 2)), paired = TRUE, var.equal = TRUE)
+pander(ojTest0.5_2)
+
+
+##Comparing tooth growth base on dose 1 vs 2
+ojTest1_2 <- t.test(len~dose, data = subset(ojData, dose %in% c(.5, 2)), paired = TRUE, var.equal = TRUE)
+pander(ojTest1_2)
+```
+
+T Test based on OJ data dose  
+```{r VCTestDoseHalfVsOne}
+##Comparing tooth growth base on dose 0.5 vs 1
+vcTest0.5_1 <- t.test(len~dose, data = subset(vcData, dose %in% c(.5, 1)), paired = TRUE, var.equal = TRUE)
+pander(vcTest0.5_1)
 
 ```
+***
+
+#### 4. State your conclusions and the assumptions needed for your conclusions.
+
+
