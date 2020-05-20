@@ -2,7 +2,9 @@
 title: "StatInf_Assignment2_ToothGrowth"
 author: "Willianto Asalim"
 date: "17/05/2020"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 The platform specification used:
@@ -43,6 +45,7 @@ Info on ToothGrowth dataset can be found at the following link: [rdocumentation 
 ```{r setoptions, echo=FALSE}
 ## Setting Global Option where echo = true so that someone will be able to read the code and results.
 library(knitr) ##Load Knitr package
+library(ggplot2) ##Plotting and data
 library(pander) ##Load package for tidy T test result
 knitr::opts_chunk$set(echo = TRUE, results = "asis", tidy = FALSE)
 ```
@@ -194,7 +197,7 @@ kable(highDose)
 ```
 T Test based on dose
 
-```{r OJTestDose}
+```{r TestDose}
 ##Comparing 0.5 dose tooth growth based supplements 
 lowDoseTest <- t.test(len~supp, data = subset(lowDose, supp %in% c("OJ", "VC")), paired = FALSE, var.equal = TRUE)
 pander(lowDoseTest)
