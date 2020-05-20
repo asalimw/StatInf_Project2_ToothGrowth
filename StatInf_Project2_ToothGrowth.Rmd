@@ -25,7 +25,6 @@ The response is the length of odontoblasts (cells responsible for tooth growth) 
 
 Info on ToothGrowth dataset can be found at the following link: [rdocumentation website](https://www.rdocumentation.org/packages/datasets/versions/3.6.2/topics/ToothGrowth) <- click here
 
-
 ```{r LoadPackages, echo=FALSE}
 library(knitr) ##Load Knitr package
 library(ggplot2) ##Plotting and data
@@ -55,53 +54,37 @@ kable(head(ToothGrowth)) ##First 6 rows of data
 
 <br />
 
+```{r, ToothGrowthPlot}
+library(gridExtra) ##Provide side by side plotting
+edaPlot <- ggplot(ToothGrowth, aes(factor(dose), len, color = supp))  ##ggplot basic info
+p1 <- edaPlot + geom_point(size = 2) + theme_bw() + 
+        labs(x = "Dose in milligrams", y = "Length", color = "Supp") +
+        scale_color_brewer(palette = "Dark2")
+
+p2 <- edaPlot + geom_boxplot() +
+      # facet_grid(.~supp)+
+      facet_grid(.~supp, labeller = as_labeller(
+            c("OJ" = "Orange juice", "VC" = "Vitamin C"))) +
+      labs(x = "Dose in milligrams", y = "Length") +
+      scale_fill_discrete(name = "Dosage of\nvitamin C\nin mg/day")
+
+## Side by side plotting
+grid.arrange(p1, p2, ncol=2, 
+             top = "Tooth Growth of Guinea Pigs - Different Dose Intake of OJ and VC")
+
+```
+
+<br />
+
 ##### The ToothGrowth Dataset contains `r nrow(ToothGrowth)` observations and `r length(ToothGrowth)` variables: `r names(ToothGrowth)`.
 
 <br />
 
-##### Below is the Exploratory Data Analysis perform for the dataset using Geom Point.
-```{r, ToothGrowthScatterPlot}
-edaPlot <- ggplot(ToothGrowth, aes(factor(dose), len, color = supp))  ##ggplot basic info
-edaPlot + geom_point(size = 2) + theme_bw() + labs(x = "Dose", y = "Length", color = "Supplement") +
-        scale_color_brewer(palette = "Dark2")
-```
-
-<br>
-
 ### 2. Provide a basic summary of the data.
 ***
 ```{r ToothGrowthSummary}
-kable(summary(ToothGrowth)) ##Summary of the data
+kable(summary(ToothGrowth))
 ```
-
-```{r BoxPlot}
-library(gridExtra) ##Provide side by side plotting
-##Side by side boxplot on Orange Juice vs Vit C dosage
-## edaplot is from the part 1 above.
-p1 <- edaPlot + geom_boxplot() +
-      # facet_grid(.~supp)+
-      facet_grid(.~supp, labeller = as_labeller(
-            c("OJ" = "Orange juice", 
-              "VC" = "Vitamin C"))) +
-      labs(title = "Tooth growth - dosages~supplements",
-           x = "Dose in milligrams/day", 
-           y = "Tooth Lengh") +
-      scale_fill_discrete(name = "Dosage of\nvitamin C\nin mg/day")
-
-## Boxplot based on supplements
-p2 <- ggplot(ToothGrowth, aes(supp, len, fill=supp)) +
-    geom_boxplot() + theme_bw() + 
-    labs( title = "Tooth growth - supplements",
-          x = "Supplement", 
-          y = "Tooth Length", 
-          color = "Supplement") + 
-    scale_fill_brewer(palette = "Dark2")
-
-## Side by side plotting
-grid.arrange(p2, p1, ncol=2)
-```
-
-<br />
 
 ### 3. Use conf. intervals or hypothesis tests to compare tooth growth by supp & dose
 ***
@@ -160,11 +143,11 @@ highDoseTest <- t.test(len~supp, data=subset(highDose, supp%in%c("OJ", "VC")),
 
 ### 4. State your conclusions and the assumptions needed for your conclusions.
 ***
-We would like more than 95% confidence interval because anything less than that is not significance difference for scientific studies and therefore the P value must be less than 0.05 or < 5%. If the P value is smaller than 0.05 this means that it is likely that the supplement or dose has impact on the tooth growth of the guinea pigs. If the P value is larger than 0.05 then it is unlikely that the supplement or dose has impact on the tooth growth of the guinea pigs. 
+We would like more than 95% confidence interval because anything less than that is not significance difference for scientific studies and therefore the P value must be less than 5% or < 0.05. If the P value is smaller than 0.05 this means that it is likely that the supplement or dose has impact on the tooth growth of the guinea pigs. If the P value is larger than 0.05 then it is unlikely that the supplement or dose has impact on the tooth growth of the guinea pigs. 
 
 Based on the T test conducted above, the P value of guinea pigs consuming OJ or VC is `r test1$p.value`. The P value is more than 0.05 which means there is no significance difference whether the guinea pigs consume OJ or VC to enhance the tooth growth. 
 
-But for scientific reasearch purpose we would like to see whether the different dosage of OJ or VC intake has any impact on the tooth growth of the guinea pigs. Observing the T tests conducted above, when the dose are 0.5 and 1.0 the P Values are `r lowDoseTest$p.value` and `r format(midDoseTest$p.value, scientific=F)` respectively. The P values are less than 0.05 which means that there is a significance difference. Guinea pigs that consumed 0.5 and 1.0 dose of OJ will have higher tooth growth compared to the guinea pigs that consumed 0.5 and 1.0 dose of VC.
+But for scientific research purpose we would like to see whether the different dosage of OJ or VC intake has any impact on the tooth growth of the guinea pigs. Observing the T tests conducted above, when the dose are 0.5 and 1.0 the P Values are `r lowDoseTest$p.value` and `r format(midDoseTest$p.value, scientific=F)` respectively. The P values are less than 0.05 which means that there is a significance difference. Guinea pigs that consumed 0.5 and 1.0 dose of OJ will have higher tooth growth compared to the guinea pigs that consumed 0.5 and 1.0 dose of VC.
 
 Whereas the dose of 2.0, the P value is `r highDoseTest$p.value`. The P value is more than 0.05 which means there is no significance difference in tooth growth whether the guinea pigs consumed 2.0 dose of OJ or VC.
 
